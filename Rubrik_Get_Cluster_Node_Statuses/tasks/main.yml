@@ -1,0 +1,19 @@
+---
+# tasks file for Rubrik_Get_Cluster_Node_Statuses
+- name: Get cluster node statuses for RUBRIK
+  become: yes
+  shell: sshpass -p '{{ rubrik_password }}' ssh -o StrictHostKeyChecking=no '{{ rubrik_username }}'@'{{ rubrik_host }}' "cluster get_node_statuses"
+  ignore_errors: true
+  register: op
+
+- set_fact:
+    status_code: 2
+    response_message: "Error encountered: {{ op.stderr }}{{ op.stdout }}"
+  when: op is failed
+- set_fact:
+    response_message: "{{ op.stdout }}{{ op.stderr }}"
+  when: op is success
+- debug:
+    var: op
+- debug:
+    var: response_message

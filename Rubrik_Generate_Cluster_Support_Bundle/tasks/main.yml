@@ -1,0 +1,25 @@
+---
+# tasks file for Rubrik_Cluster_Support_Bundle
+- name: Generate the cluster support bundle of {{ bundle_type }} type
+  become: yes
+  expect:
+    command: sshpass -p '{{ rubrik_password }}' ssh -o StrictHostKeyChecking=no '{{ rubrik_username }}'@'{{ rubrik_host }}' "support cluster_support_bundle {{ bundle_type }}"
+    responses: 
+      (.*)Destination(.*): "local"
+    timeout: null
+  ignore_errors: true
+  register: op
+- debug:
+    var: op
+- set_fact:
+    status_code: 2
+    response_message: "Failed to generate the bundle.Error encountered:{{ op.stdout }}"
+  when: op is failed
+- set_fact:
+    response_message: "Cluster support bundle of {{ bundle_type }} type generated successfully.\n{{ op.stdout }}"
+  when: op is success
+- debug:
+    var: staus_code
+- debug:
+    var: response_message
+

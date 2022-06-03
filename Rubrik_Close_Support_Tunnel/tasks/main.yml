@@ -1,0 +1,20 @@
+---
+# tasks file for Rubrik_Close_Support_Tunnel
+- name: Close the support tunnel
+  become: yes
+  shell: sshpass -p '{{ rubrik_password }}' ssh -o StrictHostKeyChecking=no '{{ rubrik_username }}'@'{{ rubrik_host }}' "support tunnel close"
+  ignore_errors: true
+  register: op
+
+- set_fact:
+    status_code: 2
+    response_message: "Failed close the support tunnel.Error encountered: {{ op.stderr }}{{ op.stdout }}"
+  when: op is failed
+- set_fact:
+    response_message: "Support tunnel closed successfully{{ op.stdout }}{{ op.stderr }}"
+  when: op is success
+- debug:
+    var: op
+- debug:
+    var: response_message
+

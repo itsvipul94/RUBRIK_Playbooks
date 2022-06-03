@@ -1,0 +1,5 @@
+---
+- hosts: localhost
+  remote_user: root
+  roles:
+    - Rubrik_Get_Cluster_Node_Statuses

@@ -1,0 +1,7 @@
+---
+- hosts: localhost
+  gather_facts: no
+  tasks:
+  - name: Call the role
+    include_role:
+      name: "{{ role_name }}"
